@@ -54,6 +54,8 @@ def export_copy():
 
 
 def find_chrome(tmp):
+    if os.environ.get("CB_CHROME"):  # local testing only (the sandbox never sets it)
+        return os.environ["CB_CHROME"]
     """Fresh copy of the image's Chromium, decrypted from the archive with the key in tests/ (never from the
     agent-writable /opt/ab, which the agent could have swapped)."""
     key = HERE / "browser.key"
@@ -69,8 +71,10 @@ def find_chrome(tmp):
 
 
 def serve(root):
-    handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(root))
-    handler.log_message = lambda *a: None
+    class Quiet(http.server.SimpleHTTPRequestHandler):
+        def log_message(self, *a):
+            pass
+    handler = functools.partial(Quiet, directory=str(root))
     httpd = socketserver.ThreadingTCPServer(("127.0.0.1", 0), handler)
     threading.Thread(target=httpd.serve_forever, daemon=True).start()
     return httpd
@@ -164,7 +168,8 @@ def main():
         log("no /workspace/index.html: reward 0")
         finish(0, {"graded": 0, kind_key: 0})
     export_copy()
-    if not (os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("OPENAI_API_KEY")):
+    dry = os.environ.get("CB_JUDGE_DRY_RUN") == "1"  # local testing: everything but the paid judge call
+    if not dry and not (os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("OPENAI_API_KEY")):
         log("UNGRADED: no judge key (set ANTHROPIC_API_KEY or OPENAI_API_KEY through [verifier.env] from a run secret). "
             "Reward is 1 because index.html exists. Score the exported copy offline instead.")
         finish(1, {"graded": 0})
@@ -193,6 +198,10 @@ def main():
         for p in shots.glob("*.jpg"):
             shutil.copy(p, OUT / f"copy-{p.name}")
         prompt = make_prompt(meta, labels, mode)
+        (OUT / "prompt.txt").write_text(prompt)
+        if dry:
+            log("dry run: sheet and prompt written, judge not called")
+            finish(0, {"graded": 0, "dry_run": 1})
         model, res = call_judge(prompt, base64.b64encode((OUT / "sheet.jpg").read_bytes()).decode())
         dims, overall = score(res, mode)
         (OUT / "judge.json").write_text(json.dumps({"model": model, "step": STEP, "mode": mode, "dims": dims,
