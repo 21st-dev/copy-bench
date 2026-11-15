@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+"""cb-frames: pull frames out of video.mp4 at any time or fps.
+
+  cb-frames --sheet                     one overview picture: 16 thumbnails over the whole video, each labelled with
+                                        its time (more-frames/sheet.png, 4x4 grid of 320x200 thumbnails)
+  cb-frames --at 0.25,1.3,2.75          frames at these seconds
+  cb-frames --fps 10                    every 0.1 s over the whole video
+  cb-frames --fps 25 --from 1 --to 2    every frame between 1 s and 2 s
+  cb-frames ... --out DIR               where to write (default: more-frames/, inside the workspace)
+
+Each frame is a 1280x800 PNG named <ms after load>ms.png, e.g. 01250ms.png = 1.25 s.
+Times are clamped to the video length. At most 64 frames per call.
+"""
+import argparse, json, os, subprocess, sys
+
+CFG = json.load(open(os.path.join(os.path.dirname(os.path.realpath(__file__)), ".cb.json")))
+WS = CFG["ws"]
+MAX = 64
+SHEET = 16                                             # thumbnails on the sheet (4x4)
+FONTS = ["/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/System/Library/Fonts/Supplemental/Arial Bold.ttf"]
+
+
+def inside(p):
+    full = os.path.realpath(os.path.join(WS, p))
+    if full != WS and not full.startswith(WS + "/"):
+        sys.exit(f"cb-frames: {p} is outside the workspace")
+    return full
+
+
+def sheet(video, out, last):
+    """16 frames evenly over the video, 320x200 each, time label top-left, tiled 4x4 into one PNG (ffmpeg only)."""
+    fps = float(CFG.get("fps", 25))
+    idx = sorted({round(i * last / (SHEET - 1) * fps) for i in range(SHEET)})
+    sel = "+".join(f"eq(n\\,{n})" for n in idx)
+    font = next((f for f in FONTS if os.path.exists(f)), None)
+    label = ("drawtext=" + (f"fontfile='{font}':" if font else "") +
+             "text='%{eif\\:floor(round(t*100)/100)\\:d}.%{eif\\:mod(round(t*100)\\,100)\\:d\\:2} s'"
+             ":x=6:y=6:fontsize=22:fontcolor=white:box=1:boxcolor=black@0.75:boxborderw=5")
+    vf = f"select='{sel}',scale=320:200,{label},tile=4x4:padding=4:color=white"
+    dst = os.path.join(out, "sheet.png")
+    r = subprocess.run([CFG["ffmpeg"], "-v", "error", "-y", "-i", video, "-vf", vf, "-fps_mode", "passthrough",
+                        "-frames:v", "1", "-update", "1", dst], capture_output=True, text=True)
+    if r.returncode or not os.path.exists(dst):
+        sys.exit(f"cb-frames: ffmpeg failed on the sheet: {r.stderr.strip()[:300]}")
+    times = " ".join(f"{n / fps:.2f}" for n in idx)
+    print(f"sheet of {len(idx)} frames in {os.path.relpath(dst, WS)} (4x4, left to right, top to bottom), at s: {times}")
+
+
+def main():
+    ap = argparse.ArgumentParser(prog="cb-frames", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--sheet", action="store_true", help="one picture with 16 time-labelled thumbnails")
+    ap.add_argument("--at", help="comma-separated times in seconds")
+    ap.add_argument("--fps", type=float)
+    ap.add_argument("--from", dest="t0", type=float, default=0.0)
+    ap.add_argument("--to", dest="t1", type=float)
+    ap.add_argument("--out", default="more-frames")
+    a = ap.parse_args()
+    dur = float(CFG["duration_s"])
+    last = dur - 1 / float(CFG.get("fps", 25))          # the last frame
+    video = os.path.join(WS, "video.mp4")
+    if a.sheet:
+        out = inside(a.out)
+        os.makedirs(out, exist_ok=True)
+        return sheet(video, out, last)
+    if a.at:
+        times = [float(t) for t in a.at.split(",") if t.strip()]
+    elif a.fps:
+        t1 = min(a.t1 if a.t1 is not None else last, last)
+        n = int((t1 - a.t0) * a.fps + 1e-6) + 1
+        times = [a.t0 + i / a.fps for i in range(max(0, n))]
+    else:
+        ap.print_help()
+        print(f"\nvideo.mp4 is {dur:g} s long ({CFG.get('fps', 25)} fps): frames from 0 to {last:.2f} s.")
+        sys.exit(2)
+    if len(times) > MAX:
+        sys.exit(f"cb-frames: {len(times)} frames asked, at most {MAX} per call")
+    out = inside(a.out)
+    os.makedirs(out, exist_ok=True)
+    written = []
+    for t in times:
+        t = min(max(0.0, t), last)
+        name = f"{round(t * 1000):05d}ms.png"
+        r = subprocess.run([CFG["ffmpeg"], "-v", "error", "-y", "-i", video, "-ss", f"{t:.3f}", "-frames:v", "1",
+                            os.path.join(out, name)], capture_output=True, text=True)
+        if r.returncode:
+            sys.exit(f"cb-frames: ffmpeg failed at {t:.3f}s: {r.stderr.strip()[:300]}")
+        written.append(name)
+    rel = os.path.relpath(out, WS)
+    print(f"{len(written)} frames in {rel}/: " + " ".join(written))
+
+
+if __name__ == "__main__":
+    main()

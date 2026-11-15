@@ -1,0 +1,8 @@
+{
+ "id": "t84-3d-letter-rings",
+ "kind": "3d",
+ "motion": "timeline",
+ "moves": true,
+ "note": "Two tilted rings of extruded capital letters spin through each other, iridescent cyan-pink with heavy bloom on a dark red vignette; the rings spin on their own. steps.json: hover tilts the rings, a drag to the right 1.8-3.0 s winds the spin back, a drag to the left 4.6-5.8 s throws it forward, then the pointer goes to the top right corner.",
+ "varies": "the ring spin follows the real clock from when the render loop starts, so the spin phase differs slightly per load; the drags move it the same way every time"
+}

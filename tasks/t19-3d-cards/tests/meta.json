@@ -1,0 +1,8 @@
+{
+ "id": "t19-3d-cards",
+ "kind": "3d",
+ "motion": "timeline",
+ "moves": true,
+ "note": "Four gradient stat cards on a 3D ring spin with yaw hinge, edge glows and blurred lens flares; loop ~6 s. t=0 is a white frame before mount.",
+ "varies": "t=0 can be the white page before the app mounts (React renders right after the load event; one of the two captures had it); the spin is seeded, its phase follows the load timing"
+}

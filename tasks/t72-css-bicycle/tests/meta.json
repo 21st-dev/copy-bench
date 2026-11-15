@@ -1,0 +1,8 @@
+{
+ "id": "t72-css-bicycle",
+ "kind": "timeline",
+ "motion": "timeline",
+ "moves": true,
+ "note": "A pure-CSS 3D bicycle under the word 'Bicycle' turns in perspective (10 s loop) with spinning wheels and wind streaks; no JS. Frozen from Animation2Code's full.html; Google Fonts CSS cut to the latin Dosis face, which is assets/font-01.woff2.",
+ "varies": "wind streak delays are fixed in the CSS; at t=0 the 'Bicycle' label can be invisible while the webfont loads (font-display block), seen in both captures"
+}

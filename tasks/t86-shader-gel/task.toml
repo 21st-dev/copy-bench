@@ -1,0 +1,56 @@
+schema_version = "1.4"
+multi_step_reward_strategy = "final"
+
+[task]
+name = "copy-bench/t86-shader-gel"
+version = "1.0.0"
+description = "Copy a moving web page from an 8 s screen recording into one index.html, then check it in a browser and fix it."
+keywords = ["ui-copy", "frontend", "shader", "video", "two-step"]
+
+[metadata]
+copy_bench_id = "t86-shader-gel"
+kind = "shader"
+motion = "mouse"
+source = "https://21st.dev/@kedhar/components/foundation-primitives"
+
+[verifier]
+timeout_sec = 600.0
+environment_mode = "shared"
+
+[verifier.env]
+# The judge key comes from a run secret. Missing secret -> empty -> ungraded mode (reward 1 if index.html exists).
+ANTHROPIC_API_KEY = "${anthropic-api-key:-}"
+OPENAI_API_KEY = "${openai-api-key:-}"
+JUDGE_MODEL = "${copy-bench-judge-model:-}"
+
+[agent]
+timeout_sec = 1800.0
+network_mode = "allowlist"
+allowed_hosts = ["openrouter.ai", "api.anthropic.com", "api.openai.com", "generativelanguage.googleapis.com", "api.x.ai", "esm.sh", "unpkg.com", "cdn.jsdelivr.net", "cdnjs.cloudflare.com"]
+
+[environment]
+network_mode = "public"
+build_timeout_sec = 1800.0
+workdir = "/workspace"
+cpus = 2
+memory_mb = 4096
+
+# Step 1, one-shot: 30 min, no browser in the sandbox.
+[[steps]]
+name = "first"
+
+[steps.agent]
+timeout_sec = 1800.0
+
+[steps.verifier.env]
+CB_STEP = "first"
+
+# Step 2, self-verified: same sandbox, the browser is unpacked by steps/fix/workdir/setup.sh, 20 min.
+[[steps]]
+name = "fix"
+
+[steps.agent]
+timeout_sec = 1200.0
+
+[steps.verifier.env]
+CB_STEP = "fix"

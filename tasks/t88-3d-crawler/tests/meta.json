@@ -1,0 +1,8 @@
+{
+ "id": "t88-3d-crawler",
+ "kind": "3d",
+ "motion": "mouse",
+ "moves": true,
+ "note": "Cobalt landing page with a huge cream headline, photo cut-outs and notes, pre-spun silk threads, and a lit 3D jumping spider. The spider drops in on a thread (0-1 s), walks after the pointer on IK legs laying silk lines to page elements (1.2-4 s), the Delete key at 4.6 s cuts every line loose (they spring off and fade), then it rests facing the viewer. Sleep (after 4.5 s still) and the fly (after 9 s) fall outside the 8 s.",
+ "varies": "partly deterministic, measured: the silk uses a fixed-seed generator (mulberry32, seed 0x5eed) but the silk physics, the drop and the walk integrate real frame time, so thread shapes and the spider's pose differ a little per load: worst 4.3 at 5.0 s (lines springing off after Delete), 2.9-3.8 during the drop (0.5-1 s) and the walk (3-4 s), under 1 once it rests. Math.random only feeds the ambient audio and three.js object ids (no visible effect), so no --seed. The fly arrives after 9 s, outside the capture"
+}

@@ -1,0 +1,8 @@
+{
+ "id": "t52-shader-chrome",
+ "kind": "shader",
+ "motion": "shader",
+ "moves": true,
+ "note": "The Liquid Metal shader with its Default preset, full viewport: a chrome diamond with flowing liquid reflections and red/blue fringes on a grey background. Page written for the bench with the published React component and preset; the libraries are frozen.",
+ "varies": "t=0 is the grey background before the React mount in one capture (6.5); after that near identical (median 0.8)"
+}

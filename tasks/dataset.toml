@@ -1,0 +1,64 @@
+[dataset]
+name = "copy-bench/copy-bench"
+version = "v1"
+description = "Copy Bench public subset: copy a moving web page from a screen recording, one-shot then self-verified in a browser."
+keywords = ["ui-copy", "frontend", "vision", "multi-step"]
+
+[[dataset.authors]]
+name = "21st.dev"
+
+[[tasks]]
+name = "copy-bench/t19-3d-cards"
+digest = "sha256:7c819b3c0ab9cc5c69084b546241520135eec53ddab8c6cf42b81a2dae6d94f2"
+
+[[tasks]]
+name = "copy-bench/t20-3d-pile"
+digest = "sha256:99d35c9d4cbc1c58bbe0da108737b98d8508a541ff2013cac557e9fb9de85cca"
+
+[[tasks]]
+name = "copy-bench/t31-physics-fabric"
+digest = "sha256:f0a959395dec84913633df4f72baf4547f125a2c5694e14a8f39c96652c5546f"
+
+[[tasks]]
+name = "copy-bench/t48-3d-shafts"
+digest = "sha256:33a26454df0c0d6c73a1e1a50036aabfedf9a8bf96c978a71811864f6b1605af"
+
+[[tasks]]
+name = "copy-bench/t49-3d-softbox"
+digest = "sha256:bbcba5a540474b96f6f87445f2274c4d34e56fa023252d72d50bd70e6fe8b100"
+
+[[tasks]]
+name = "copy-bench/t52-shader-chrome"
+digest = "sha256:3c384fd76e51575d1fef94fb7f67b5b93df87a9414459821ab36a43d3b980bbf"
+
+[[tasks]]
+name = "copy-bench/t67-canvas-boids"
+digest = "sha256:90e0c8131a8201a004415b4bf6336016909e8aa39a007f0c4765be83c4f6feb0"
+
+[[tasks]]
+name = "copy-bench/t71-svg-morph"
+digest = "sha256:430431855639bb758bbf662897a8eb176ff43340d18970d18b461559eb69fc94"
+
+[[tasks]]
+name = "copy-bench/t72-css-bicycle"
+digest = "sha256:2d856bca7308aa7fc05bd6a228f98679ddbd5e0de2daaa2dbbe86797262ed051"
+
+[[tasks]]
+name = "copy-bench/t84-3d-letter-rings"
+digest = "sha256:10932f74e9ce160b23280b275643e1822c349b9caf31e5d8396b0945886c045e"
+
+[[tasks]]
+name = "copy-bench/t86-shader-gel"
+digest = "sha256:cdf54c8df8f4effd447625a66fa6b601afb8344524d5ed7344b9d5b11c4cc243"
+
+[[tasks]]
+name = "copy-bench/t87-canvas-cursive"
+digest = "sha256:f0ee43f7d4f7fa8ee298c8a5f1dfca9a3b8a63f6577eee1620cdd42ba0a9a657"
+
+[[tasks]]
+name = "copy-bench/t88-3d-crawler"
+digest = "sha256:df95aa669d1db7f7903d0efc2448d18fd5f59c3c32ef776191ff0b7f62913cc1"
+
+[[files]]
+path = "metric.py"
+digest = "sha256:ba103da9d8f04f5eedaf0749a534b373cbf508409b23e4d11eb0a8ccf3213d1c"

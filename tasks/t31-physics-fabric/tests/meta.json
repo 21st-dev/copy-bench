@@ -1,0 +1,8 @@
+{
+ "id": "t31-physics-fabric",
+ "kind": "physics",
+ "motion": "mouse",
+ "moves": true,
+ "note": "Hanging indigo denim cloth (WebGL mesh) with pre-made holes; it only moves on input. steps.json rests the cursor (dent), then drags a rip across the middle 2.0-4.1 s; the flap sags and frays, then settles.",
+ "varies": "the cloth simulation is time-stepped on real frames, so the tear shape, sag and folds differ per load; t=0 can be the white page before the app mounts (React renders right after the load event; one of the two captures had it)"
+}

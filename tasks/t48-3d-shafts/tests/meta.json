@@ -1,0 +1,8 @@
+{
+ "id": "t48-3d-shafts",
+ "kind": "3d",
+ "motion": "timeline",
+ "moves": true,
+ "note": "A perforated cage sphere in dark fog; two coloured spot lights (blue, orange) orbit it and a light inside shines out, so volumetric shafts sweep through the holes. Frozen from the PlayCanvas examples iframe; the example loader's name lookup is fixed and its dev inspector is not loaded (both patched in answer/).",
+ "varies": "t=0 is black while the engine and model load; the lights' orbit is frame-stepped (worst 1.6)"
+}

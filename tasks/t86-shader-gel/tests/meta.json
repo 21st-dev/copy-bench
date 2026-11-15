@@ -1,0 +1,8 @@
+{
+ "id": "t86-shader-gel",
+ "kind": "shader",
+ "motion": "mouse",
+ "moves": true,
+ "note": "A pale card of five raymarched frosted-gel shapes (asterisk, sphere, stacked half-domes, hourglass, orb) on plates, with a glass lens. steps.json: hover the asterisk (lifts and spins, lens follows), hover the half-domes (they fan out), drag them 3.3-4.0 s, click the sphere at 5.8 s (pops and stays lifted), leave below the card. The hourglass flips over on its own every 6.5 s.",
+ "varies": "the idle float, slow turning and the hourglass flip timer run on the real clock, so the idle phase differs slightly per load; the hover, drag and click reactions repeat"
+}

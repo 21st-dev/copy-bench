@@ -1,0 +1,8 @@
+{
+ "id": "t20-3d-pile",
+ "kind": "3d",
+ "motion": "timeline",
+ "moves": true,
+ "note": "Pile of tilted LED marquee badges and round emoji faces on black: dot-matrix text scrolls, faces blink, gentle float. t=0 is a white frame before mount.",
+ "varies": "marquee scroll and blink phases follow the real clock from mount; the layout is seeded and fixed"
+}

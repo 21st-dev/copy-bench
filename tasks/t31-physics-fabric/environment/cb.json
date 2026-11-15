@@ -1,0 +1,6 @@
+{
+ "ws": "/workspace",
+ "duration_s": 7.0,
+ "fps": 25,
+ "ffmpeg": "/usr/bin/ffmpeg"
+}

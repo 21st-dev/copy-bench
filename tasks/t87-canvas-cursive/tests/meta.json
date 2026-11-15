@@ -1,0 +1,8 @@
+{
+ "id": "t87-canvas-cursive",
+ "kind": "canvas",
+ "motion": "timeline",
+ "moves": true,
+ "note": "A translucent neon tube writes a lowercase cursive word from 0.4 s to about 4 s with colours flowing along the stroke, inside a glowing rainbow frame, then holds. The full loop is 10 s (the erase starts at 8.3 s), so 8 s shows write + hold. No mouse script: the pointer only brightens the frame glow near it, barely visible.",
+ "varies": "the stroke and the colour flow follow the real clock from when the WebGL loop starts, so the pen position and colours differ slightly per load"
+}

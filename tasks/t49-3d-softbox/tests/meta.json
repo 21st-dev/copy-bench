@@ -1,0 +1,8 @@
+{
+ "id": "t49-3d-softbox",
+ "kind": "3d",
+ "motion": "timeline",
+ "moves": true,
+ "note": "A glossy orange rounded-cube character with a face, floating and turning in a dark teal room between two tall glowing softbox panels, mirrored in a reflective floor. Frozen from the PlayCanvas examples iframe; loader name lookup fixed, dev inspector not loaded.",
+ "varies": "t=0 is black while the engine loads; Math.random is fixed by --seed 1 (worst 1.5)"
+}

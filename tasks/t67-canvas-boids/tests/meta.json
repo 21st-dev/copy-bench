@@ -1,0 +1,8 @@
+{
+ "id": "t67-canvas-boids",
+ "kind": "canvas",
+ "motion": "timeline",
+ "moves": true,
+ "note": "No input: 100 boids from seeded random starts flock on their own.",
+ "varies": "repeatable at the start (seeded positions) and then slowly chaotic: one update per animation frame, so a dropped frame changes the flock; worst 1.7 / 255 at 5 s in the repeat capture"
+}

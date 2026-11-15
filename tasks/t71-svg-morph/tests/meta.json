@@ -1,0 +1,8 @@
+{
+ "id": "t71-svg-morph",
+ "kind": "timeline",
+ "motion": "timeline",
+ "moves": true,
+ "note": "A clover-like gradient shape morphs into a speech bubble, rocket, lightning bolt and thumb (2 s per morph, expo.inOut, repeat -1); 8 s shows the first four. Frozen from the pen's debug page with GSAP + MorphSVGPlugin vendored; the GSDevTools scrubber bar was removed.",
+ "varies": "nothing random; the timeline runs on the real clock (repeat worst 1.0)"
+}
