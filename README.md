@@ -1,7 +1,8 @@
 # Copy Bench on Valkyrie
 
-<!-- OVERVIEW: written by Sergey, do not edit -->
-TODO(sergey)
+Copy Bench measures how well models rebuild complex web components from a screen recording: WebGL, shaders and multi-step interactive animations.
+
+Full results and every copy next to its original: **https://21st.dev/benchmarks/copy**
 
 ## How it works
 
