@@ -2,13 +2,12 @@
 # requires-python = ">=3.10"
 # dependencies = []
 # ///
-"""Copy Bench dataset score, offline. It follows Valkyrie's metric.py contract, but the hosted Valkyrie refuses custom
-scoring, so it lives here instead of in tasks/. Hosted runs report the plain mean of "reward", which is the same headline.
+"""Copy Bench dataset score, offline: the breakdown behind the headline number.
   uv run --script scripts/metric.py -i rewards.jsonl -o score.json
 Each input line is one task's rewards (or null when the task errored). The headline is "reward": the mean over all
-tasks, errors count as 0 (Valkyrie shows it x100). Also reported: the mean of each checklist dimension (content,
-layout, color, typography, motion) over graded tasks, the mean per task kind (kind_3d, kind_shader, ...) and the share
-of tasks that were really judged (graded_share; below 1 means some ran without the judge secret)."""
+tasks, errors count as 0. Also reported: the mean of each checklist dimension (content, layout, color, typography,
+motion) over graded tasks, the mean per task kind (kind_3d, kind_shader, ...) and the share of tasks that were really
+judged (graded_share; below 1 means some ran without a judge key)."""
 import argparse, json
 
 ap = argparse.ArgumentParser()

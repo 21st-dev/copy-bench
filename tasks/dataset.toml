@@ -1,60 +1,63 @@
-[dataset]
-name = "copy-bench/copy-bench"
-version = "v1"
-description = "Copy Bench public subset: copy a moving web page from a screen recording, one-shot then self-verified in a browser."
-keywords = ["ui-copy", "frontend", "vision", "multi-step"]
+# Copy Bench public subset. Digests are pinned by `harbor sync tasks`.
 
+[dataset]
+name = "21st/copy-bench"
+version = "1.0.0"
+description = "Copy Bench public subset (13 of 50 tasks): rebuild a moving web component from a screen recording, one-shot, then self-verified in a browser."
+keywords = [ "ui-copy", "frontend", "vision", "webgl", "multi-step",]
 [[dataset.authors]]
 name = "21st.dev"
 
-[[tasks]]
-name = "copy-bench/t19-3d-cards"
-digest = "sha256:7256c4105b1d0a35204b293b9bb1961a430325887bdf1c8ce6e4e5ef3f4db35d"
 
 [[tasks]]
-name = "copy-bench/t20-3d-pile"
-digest = "sha256:f0b7ac253aaa359d91b862a179bb704de0b218e6a1a9066beccb20742ad6bd4f"
+name = "21st/copy-bench-t19-3d-cards"
+digest = "sha256:e267dcb561a22386ccc735730ee0a50ae48a919f1a0f7834c34e95df10c36995"
 
 [[tasks]]
-name = "copy-bench/t31-physics-fabric"
-digest = "sha256:dae757dea0c7306143fb1c3271f96c8afac1dedcc3d426b9dd53a04ee10a95b2"
+name = "21st/copy-bench-t20-3d-pile"
+digest = "sha256:00095bb0752a25aeccba149f4c87dd7094e2cd05a21ecbbcb2bc087cda2bbde0"
 
 [[tasks]]
-name = "copy-bench/t48-3d-shafts"
-digest = "sha256:a1906f3db6e0271be25ddaa93403c8cfc667555d0afc76e525650b58962a3675"
+name = "21st/copy-bench-t31-physics-fabric"
+digest = "sha256:4d67668a52a7a229f201dd449f5e520d46f5d25cb597448c01ce5eac0ed80593"
 
 [[tasks]]
-name = "copy-bench/t49-3d-softbox"
-digest = "sha256:b37b8fc7ecd714dc482a88f0244b2ab20e6c18af79a2de64f3d8c2ae17afbaf6"
+name = "21st/copy-bench-t48-3d-shafts"
+digest = "sha256:18c90d6eed5b5efe6e550b31f79b1f18997c2ccf51945c2ee1b62a63f914130f"
 
 [[tasks]]
-name = "copy-bench/t52-shader-chrome"
-digest = "sha256:1a6e68abad8008493351e6ef90bd5e837735d080f6822f11189edff975e2cc97"
+name = "21st/copy-bench-t49-3d-softbox"
+digest = "sha256:6f9f13336f1110e26fe6cf8274e54c13e0be851563b4b862b5d6d1155e5b7171"
 
 [[tasks]]
-name = "copy-bench/t67-canvas-boids"
-digest = "sha256:22586f6d802ae364666e1cc4db867ad900fcd5560a1c47c6acb1e9f7e413d73c"
+name = "21st/copy-bench-t52-shader-chrome"
+digest = "sha256:6cb06046c36252bcdb1112c5c9629592d5b480e2f357dbc9b0c0b0d22ccde3cb"
 
 [[tasks]]
-name = "copy-bench/t71-svg-morph"
-digest = "sha256:45581e9649c66e4baaef2758f8d6cdd313bed3b03b99268cccfc25efd960ca7e"
+name = "21st/copy-bench-t67-canvas-boids"
+digest = "sha256:ba26e9a281ae503ec13cf6f58b948c0f7885c669e7d1c5d2ff8e61853059da4b"
 
 [[tasks]]
-name = "copy-bench/t72-css-bicycle"
-digest = "sha256:1407c5d2c07045f7dff1d129fc851dcbc782aeb2364211663bdc8dd66ccf574b"
+name = "21st/copy-bench-t71-svg-morph"
+digest = "sha256:0ad7decec2f95c0256d2f4f26f534fd2e8fa6edd0edaa3ddd8ce9cd2dfa3defa"
 
 [[tasks]]
-name = "copy-bench/t84-3d-letter-rings"
-digest = "sha256:30e1dc4b956652f06a28365a1e91f3f6e698f71fa9298702d3a8625c42874f56"
+name = "21st/copy-bench-t72-css-bicycle"
+digest = "sha256:660ce6cbc0d666a50d9853db252b7a49bc60ccc175d99cee5726010acde31aa0"
 
 [[tasks]]
-name = "copy-bench/t86-shader-gel"
-digest = "sha256:e2cd8694ede817f1fcb0e52a025668ad2388e3510c0adf37477c3f04d8947a3c"
+name = "21st/copy-bench-t84-3d-letter-rings"
+digest = "sha256:08daa60d1cc02ca4424722dd5f5a0f648ae8672277c20a292c53f40674b937c6"
 
 [[tasks]]
-name = "copy-bench/t87-canvas-cursive"
-digest = "sha256:b04871e80810faeaf8f94191c1daf28afe3bb61e1d020573becb64394ac16500"
+name = "21st/copy-bench-t86-shader-gel"
+digest = "sha256:7210f39a781389ec923423e5c08bba3a1f68ad16c6a280c2f24713bf618738fa"
 
 [[tasks]]
-name = "copy-bench/t88-3d-crawler"
-digest = "sha256:cb23180a9c2d1f95453a3558d16515efa636b363ca61c4d5bf350d4dcb835a4c"
+name = "21st/copy-bench-t87-canvas-cursive"
+digest = "sha256:49aba62a87af8698fbc2e30fe9d0d728fa9f83d183c4c24f6f498dd050845167"
+
+[[tasks]]
+name = "21st/copy-bench-t88-3d-crawler"
+digest = "sha256:6001bebf040dd61587f7f26459d4071d05238753e45505e00560a8e3d81917b7"
+

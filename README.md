@@ -1,4 +1,4 @@
-# Copy Bench on Valkyrie
+# Copy Bench
 
 Copy Bench measures how well models rebuild complex web components from a screen recording: WebGL, shaders and multi-step interactive animations.
 
@@ -10,8 +10,8 @@ Copy Bench measures how well a model can rebuild a moving web component from a s
 8 second video of a page (WebGL scenes, shaders, canvas animations, mouse-driven effects) and has to write one
 `index.html` that looks and moves the same.
 
-This repo is a public subset of Copy Bench (13 of the 50 tasks), packaged as a [Valkyrie](https://github.com/vals-ai/Valkyrie)
-dataset you can push and run as is. Full write-up and results: https://21st.dev/benchmarks/copy
+This repo is a public subset of Copy Bench (13 of the 50 tasks), packaged as a
+[Harbor](https://harborframework.com) dataset you can run as is. Full write-up and results: https://21st.dev/benchmarks/copy
 
 ## Why frontier models still get it wrong
 
@@ -43,7 +43,7 @@ look at its own page in a browser raised the score on 418 of 650 copies and lowe
 
 Each model ran in its maker's own agent harness (Codex, Claude Code, Gemini CLI, ...), because that's how people
 actually use these models for frontend work, and it keeps us from handicapping a model with a harness it wasn't tuned
-for. On Valkyrie the same tasks run with any agent from the public registry, for example Claude Code or Codex.
+for. On Harbor the same tasks run with any agent it ships, for example Claude Code or Codex.
 
 ## Failure modes
 
@@ -77,7 +77,7 @@ Every task has two steps that run in the same sandbox:
 tasks/
   dataset.toml              pins the 13 tasks by digest
   t84-3d-letter-rings/
-    task.toml               two steps, time limits, network allowlist, judge secrets
+    task.toml               two steps, time limits, network allowlist, judge keys
     environment/            Dockerfile, the video, steps.json, cb-frames
     steps/first/instruction.md
     steps/fix/instruction.md
@@ -110,35 +110,36 @@ After each step, `tests/grade.py` runs inside the sandbox:
 The task reward is the score of the last step (self-verified). The one-shot score is recorded in the step results.
 `/logs/verifier/` keeps the copy, the sheet, the judge's answer (`judge.json`) and a log.
 
-The judge key comes from a run secret: `anthropic-api-key` (Claude, default `claude-opus-5-5`) or `openai-api-key`
-(default `gpt-6.1-sol`). Set the secret `copy-bench-judge-model` to use a different model. Without a key, the run
-still finishes but isn't judged: reward 1 if `index.html` exists, and `graded_share` in the dataset score shows that.
-If grading breaks for any other reason (for example the agent deleted the browser), the reward is 0, so breaking the
-grader never pays.
+The judge key comes from your shell:
 
-The dataset score on Valkyrie is the mean reward over the tasks. `reward.json` also carries the per-dimension scores
-(`content`, `layout`, ...) and the task kind (`kind_3d`, ...). The hosted Valkyrie doesn't take a custom `metric.py`,
-so `scripts/metric.py` does the breakdown offline from exported rewards (errors count as 0, dimensions averaged over
-judged tasks, `graded_share` = share of tasks that were really judged).
+| Variable | What it does |
+|---|---|
+| `ANTHROPIC_API_KEY` | judge with Claude (default `claude-opus-5-5`) |
+| `OPENAI_API_KEY` | judge with GPT (default `gpt-6.1-sol`), used when there's no Anthropic key |
+| `COPY_BENCH_JUDGE_MODEL` | a different judge model |
 
-## Run it on Valkyrie
+Without a key the run still finishes but isn't judged: reward 1 if `index.html` exists, and `graded` is 0 in
+`reward.json`. If grading breaks for any other reason (for example the agent deleted the browser), the reward is 0,
+so breaking the grader never pays.
 
-After `valkyrie login` and connecting Modal (see the [quickstart](https://github.com/vals-ai/Valkyrie)):
+The dataset score is the mean reward over the tasks. `reward.json` also carries the per-dimension scores (`content`,
+`layout`, ...) and the task kind (`kind_3d`, ...); `scripts/metric.py` does that breakdown offline from exported
+rewards.
+
+## Run it on Harbor
 
 ```bash
-valkyrie dataset push copy-bench/copy-bench ./tasks --tag v1
+export ANTHROPIC_API_KEY=...        # the agent and the judge both use it
 
-valkyrie agent install https://github.com/vals-ai/public-agent-registry/tree/main/examples/claude_code-v1.0.0
-valkyrie secret set anthropic-api-key
+# one task
+harbor run -d 21st/copy-bench -a claude-code -m anthropic/claude-opus-5-5 --n-tasks 1
 
-valkyrie run start --agent claude_code-v1.0.0 --dataset copy-bench/copy-bench@v1 \
-  --model anthropic/claude-opus-5-5 --provider modal \
-  -s ANTHROPIC_API_KEY anthropic-api-key --slice 0:1 --concurrency 1 --connect
-
-valkyrie tui
+# all 13
+harbor run -d 21st/copy-bench -a claude-code -m anthropic/claude-opus-5-5 -n 4
 ```
 
-Drop `--slice 0:1` to run all 13 tasks. The image builds for linux/amd64 and the first build takes a few minutes.
+From a checkout of this repo, swap `-d 21st/copy-bench` for `-p tasks`. The image builds for linux/amd64 and
+arm64, and the first build takes a few minutes.
 
 ## Known limits
 
@@ -158,19 +159,8 @@ Drop `--slice 0:1` to run all 13 tasks. The image builds for linux/amd64 and the
 13 of the 50 tasks: 7 components from the 21st.dev catalog and 6 open-source demos under permissive licenses (MIT or
 Apache-2.0). See [ATTRIBUTION.md](ATTRIBUTION.md). The other 37 tasks are held out so the benchmark stays useful.
 
-`scripts/build_tasks.py` rebuilds `tasks/` from our internal lab checkout, and `scripts/lock.py` rewrites
-`dataset.toml` and runs the Valkyrie CLI's own pre-push checks.
-
-## Judging notes
-
-- **Novelty**: video in, working code out, graded on motion as well as looks. Most UI benchmarks grade a static
-  screenshot or the DOM.
-- **Difficulty**: the best model scores 86.7 with a browser, and the field spreads from 18.9 to 86.7.
-- **Execution**: the full run is 13 models x 50 tasks x 2 steps, two judges, with a human-graded check on 249 copies.
-  This repo validates with Valkyrie's own task validator and CLI pre-push checks.
-- **Importance**: "make it look like this" is one of the most common frontend asks, and motion is where agents fall
-  short today.
-- **Clarity**: one task = one video, one file out, one checklist score.
+`scripts/build_tasks.py` rebuilds `tasks/` from our internal lab checkout, and `harbor sync tasks` pins the digests
+in `dataset.toml`.
 
 ## License
 

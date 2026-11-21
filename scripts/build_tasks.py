@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Build tasks/ (the Valkyrie dataset) from the private Copy Bench lab checkout. Read-only on the lab.
+"""Build tasks/ (the Harbor dataset) from the private Copy Bench lab checkout. Read-only on the lab.
 
   python3 scripts/build_tasks.py --lab ~/Develop/21/21st-lab/copy-bench
 
 Each task: the lab's two-step Harbor task (harbor-2step/<id>-video) with solutions dropped, one shared tests/ folder
-(grader/ + 4 reference frames + the input script + task metadata) and a task.toml Valkyrie validates.
+(grader/ + 4 reference frames + the input script + task metadata) and a task.toml. Then `harbor sync tasks` pins the digests in tasks/dataset.toml.
 """
 import argparse, json, shutil, subprocess
 from pathlib import Path
@@ -20,10 +20,11 @@ TOML = """schema_version = "1.4"
 multi_step_reward_strategy = "final"
 
 [task]
-name = "copy-bench/{tid}"
+name = "21st/copy-bench-{tid}"
 version = "1.0.0"
 description = "Copy a moving web page from an 8 s screen recording into one index.html, then check it in a browser and fix it."
-keywords = ["ui-copy", "frontend", "{kind}", "video", "two-step"]
+authors = [{{ name = "21st.dev" }}]
+keywords = ["copy-bench", "ui-copy", "frontend", "{kind}", "video", "two-step"]
 
 [metadata]
 copy_bench_id = "{tid}"
@@ -36,10 +37,10 @@ timeout_sec = 600.0
 environment_mode = "shared"
 
 [verifier.env]
-# The judge key comes from a run secret. Missing secret -> empty -> ungraded mode (reward 1 if index.html exists).
-ANTHROPIC_API_KEY = "${{anthropic-api-key:-}}"
-OPENAI_API_KEY = "${{openai-api-key:-}}"
-JUDGE_MODEL = "${{copy-bench-judge-model:-}}"
+# The judge key comes from your shell. No key -> ungraded mode (reward 1 if index.html exists).
+ANTHROPIC_API_KEY = "${{ANTHROPIC_API_KEY:-}}"
+OPENAI_API_KEY = "${{OPENAI_API_KEY:-}}"
+JUDGE_MODEL = "${{COPY_BENCH_JUDGE_MODEL:-}}"
 
 [agent]
 timeout_sec = 1800.0
