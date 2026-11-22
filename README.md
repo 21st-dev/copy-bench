@@ -2,7 +2,8 @@
 
 Copy Bench measures how well models rebuild complex web components from a screen recording: WebGL, shaders and multi-step interactive animations.
 
-Full results and every copy next to its original: **https://21st.dev/benchmarks/copy**
+Results, with every copy next to its original: **https://21st.dev/benchmarks/copy**
+Method: **https://21st.dev/benchmarks/copy/method**
 
 ## How it works
 
@@ -11,23 +12,27 @@ Copy Bench measures how well a model can rebuild a moving web component from a s
 `index.html` that looks and moves the same.
 
 This repo is a public subset of Copy Bench (13 of the 50 tasks), packaged as a
-[Harbor](https://harborframework.com) dataset you can run as is. Full write-up and results: https://21st.dev/benchmarks/copy
+[Harbor](https://harborframework.com) dataset you can run as is:
+[`21st/copy-bench`](https://hub.harborframework.com/datasets/21st/copy-bench).
 
 ## Why frontier models still get it wrong
 
-We ran 13 models on all 50 tasks (650 copies per step, 1,300 in total). The best model gets 86.7 out of 100 when it can
-check its work in a browser, and only 76.9 when it can't. Most models land between 35 and 70. The hard part is motion:
+We ran 16 models on all 50 tasks (800 copies per step, 1,600 in total). The best model gets 92.4 out of 100 when it can
+check its work in a browser, and 89.1 when it can't. Most models land between 35 and 70. The hard part is motion:
 models get the colors and the layout roughly right, then miss how fast things spin, how a shape morphs, what happens
 under the mouse, or what a shader actually looks like over time.
 
 | Model | Harness | One-shot | Self-verified |
 |---|---|---:|---:|
+| GPT-6.2 Astra | Codex | 89.1 | 92.4 |
+| GPT-6.2 Sol | Codex | 84.1 | 88.4 |
 | GPT-6 Astra | Codex | 76.9 | 86.7 |
 | GPT-6.1 Sol | Codex | 75.6 | 82.2 |
 | Claude Fable 5.2 | Claude Code | 62.4 | 69.0 |
 | Gemini 4 Carbon | Gemini CLI | 57.0 | 67.2 |
 | GPT-6 Sol | Codex | 57.3 | 64.5 |
 | Claude Opus 5.5 | Claude Code | 50.1 | 59.1 |
+| Qwen 4 Max | Qwen Code | 45.4 | 54.4 |
 | Muse Wonder 1.0 | Muse Code | 41.3 | 51.9 |
 | Qwen 3.8 Max Prime | Qwen Code | 41.2 | 50.1 |
 | Kimi K3.1 Pro | Kimi Code | 34.6 | 46.6 |
@@ -38,8 +43,8 @@ under the mouse, or what a shader actually looks like over time.
 
 ![One-shot vs self-verified score per model](docs/results.png)
 
-Scores are on all 50 tasks, graded offline by two vision judges (GPT-6.1 Sol and Claude Opus 5.5). Letting the model
-look at its own page in a browser raised the score on 418 of 650 copies and lowered it on 100.
+Scores are on all 50 tasks, the mean of two judges from different labs (GPT-6.1 Sol and Claude Opus 5.5). Letting the
+model look at its own page in a browser raised the score on 507 of 799 copies and lowered it on 124.
 
 Each model ran in its maker's own agent harness (Codex, Claude Code, Gemini CLI, ...), because that's how people
 actually use these models for frontend work, and it keeps us from handicapping a model with a harness it wasn't tuned
@@ -51,9 +56,9 @@ for. On Harbor the same tasks run with any agent it ships, for example Claude Co
   task (Neon Loop, 3D rings of letters) copied by GPT-6 Astra and by MiMo V2.6 Pro, as the in-run grader sees it.
   MiMo's copy is a blown-out glow with no letters at all. Some models also rebuild a famous demo they remember
   instead of what the video shows.
-- **Checking your own work doesn't always help.** Self-verifying raised the score on 418 of 650 copies, but lowered
-  it on 100: the model "fixes" things that were right, or breaks the page while editing.
-- **Copies that never render.** 152 of the 1,300 steps hit the time limit, and 31 left no `index.html` at all.
+- **Checking your own work doesn't always help.** Self-verifying raised the score on 507 of 799 copies, but lowered
+  it on 124: the model "fixes" things that were right, or breaks the page while editing.
+- **Copies that never render.** 155 of the 1,600 steps hit the time limit, and 31 left no `index.html` at all.
 
 GPT-6 Astra (close copy):
 
@@ -62,6 +67,27 @@ GPT-6 Astra (close copy):
 MiMo V2.6 Pro (letters gone, only the glow is left):
 
 ![MiMo V2.6 Pro copy of t84](docs/t84-mimo-v2.6-pro.jpg)
+
+## How the published scores were judged
+
+The numbers above come from our offline evaluation, described in full on the
+[method page](https://21st.dev/benchmarks/copy/method). In short:
+
+- **Analytic rubric.** Fidelity is split into 26 criteria in five dimensions: content, layout, motion, color and
+  typography. A judge rates each criterion `same`, `minor` or `major`, and code computes the score. The model never
+  picks a number.
+- **A panel of two LLM judges.** GPT-6.1 Sol and Claude Opus 5.5 rate every copy from side-by-side frames of the
+  original and the copy, and we report their mean. The judges come from two labs because a judge favors its own
+  family: on GPT copies the GPT judge scores 3.8 points above the Claude judge. Across all copies the two correlate
+  at 0.89 and sit 10 points apart on average.
+- **Integrity checks.** A score only counts if the copy was built from what the model saw. Reused code, replayed
+  pixels (an embedded video or flipped frames) and a missing file score zero. No copy replayed the recording. Four
+  copies scored zero for reused code: with nothing fetched, Gemini 4 Carbon turned in a flocking simulation whose
+  code matches 90% of the open-source original.
+- **Human validation.** We scored 249 copies by hand. The judges' average matches those scores at 0.84, closer than
+  either judge alone.
+
+The grader that ships in this repo is a lighter version of that setup: see [Known limits](#known-limits).
 
 ## Task anatomy
 
@@ -101,8 +127,8 @@ After each step, `tests/grade.py` runs inside the sandbox:
 2. It serves the workspace, opens the copy in headless Chromium at 1280x800, replays the same mouse/scroll script,
    and takes screenshots at the same 4 timestamps as the reference frames.
 3. It builds one contact sheet (original on the left, copy on the right, one row per timestamp) and asks one vision
-   judge a fixed checklist: content, layout, color, typography, motion (26 checks, each `same`, `minor`, `major` or
-   `n/a`).
+   judge a fixed rubric: content, layout, color, typography, motion (26 criteria, each rated `same`, `minor`,
+   `major` or `n/a`).
 4. The score is computed in code, not by the model: each dimension is 100 minus 15 per minor and 40 per major,
    overall is a weighted mean (content 25%, layout 25%, motion 20%, color 15%, typography 15%).
    Reward = overall / 100.
@@ -148,8 +174,10 @@ arm64, and the first build takes a few minutes.
   different from the reference (shading, bloom, smoothness). The judge prompt says so, and the per-task note about
   what varies between loads of the original is passed through. Our published results were captured on the same
   machine for both sides, so they don't have this problem.
-- **One judge, 4 frames.** The published results use two judges on full recordings (16 frames plus video). The
-  in-run grader is a lighter version of the same checklist and scoring, so expect its numbers to be close, not equal.
+- **One judge, 4 frames, no integrity checks.** The published results use two judges on full recordings, and zero a
+  copy that reuses the original's code or replays the recording. The in-run grader here uses the same rubric and
+  the same scoring with one judge on 4 frames, and it does not run the integrity checks. Expect its numbers to be
+  close to ours, not equal.
 - **The verifier shares the sandbox with the agent.** It decrypts its own copy of Chromium and calls system binaries
   by absolute path, but a determined agent running as root could still tamper with the sandbox.
 - No reference solutions are included (the originals' source isn't redistributed), so there's no oracle run.
